@@ -66,3 +66,29 @@ function enviarFormulario(event) {
   .then(() => alert("Inscripción exitosa"))
   .catch(() => alert("Hubo un error al enviar los datos"));
 }
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.openById("1mwkpkzl9NmiQT6zfO7cQtzmbhIg8U_r6LBrMr-kgnjs").getSheetByName("Hoja 1");
+    
+    // Verifica si hay datos en e.postData
+    if (!e || !e.postData || !e.postData.contents) {
+      return ContentService.createTextOutput("Error: No se recibieron datos correctamente.");
+    }
+    
+    var datos = JSON.parse(e.postData.contents);
+
+    sheet.appendRow([
+      datos.nombre || "",
+      datos.apellido || "",
+      datos.email || "",
+      datos.DNI || "",
+      (datos.Cursos && datos.Cursos.length > 0) ? datos.Cursos.join(", ") : ""
+    ]);
+
+    return ContentService.createTextOutput("Datos guardados correctamente");
+
+  } catch (error) {
+    return ContentService.createTextOutput("Error en doPost: " + error.message);
+  }
+}
+
